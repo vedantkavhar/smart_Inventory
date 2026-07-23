@@ -2,17 +2,19 @@ package com.inventory.smartinventory.service;
 
 import java.util.List;
 
-import com.inventory.smartinventory.entity.Category;
+import com.inventory.smartinventory.dto.CategoryRequestDTO;
+import com.inventory.smartinventory.dto.CategoryResponseDTO;
 
 public interface CategoryService {
+// step 9 created dtos ,use dtos till entity
+	CategoryResponseDTO saveCategory(CategoryRequestDTO categoryRequestDTO);
 
-    Category saveCategory(Category category);
+    List<CategoryResponseDTO> getAllCategories();
 
-    List<Category> getAllCategories();
+    CategoryResponseDTO getCategoryById(Long id);
 
-    Category getCategoryById(Long id);
-
-    Category updateCategory(Long id, Category category);
+    CategoryResponseDTO updateCategory(Long id,
+            CategoryRequestDTO categoryRequestDTO);
 
     void deleteCategory(Long id);
 

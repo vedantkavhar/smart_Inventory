@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.inventory.smartinventory.dto.CategoryRequestDTO;
+import com.inventory.smartinventory.dto.CategoryResponseDTO;
 import com.inventory.smartinventory.entity.Category;
 import com.inventory.smartinventory.service.CategoryService;
 
@@ -26,27 +28,36 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    // step 9 categorty -> categoryRequestDto ,
+//    store incoming data ,use reqdto till in service layer
     @PostMapping
-    public Category saveCategory(@Valid @RequestBody Category category) {
-        return categoryService.saveCategory(category);
+    public CategoryResponseDTO saveCategory(@Valid @RequestBody CategoryRequestDTO categoryRequestDTO) {
+        return categoryService.saveCategory(categoryRequestDTO);
     }
 
+    // step 9 categorty -> categoryResponseDto ,
+//    getting / recinving list from db
+
     @GetMapping
-    public List<Category> getAllCategories() {
+    public List<CategoryResponseDTO> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
+    // step 9 usecategory -> categoryResponseDTO  ,
+//    getting /receiving cat from db
     @GetMapping("/{id}")
-    public Category getCategoryById(@PathVariable Long id) {
+    public CategoryResponseDTO getCategoryById(@PathVariable Long id) {
         return categoryService.getCategoryById(id);
     }
     
     
-//    step 4 update category
+  //    step 4 update category
+ // step 9 category -> categoryRequestDto ,
+//  store incoming data ,use reqdto till in service layer
     @PutMapping("/{id}")
-    public Category updateCategory(@PathVariable Long id, @Valid @RequestBody Category category) {
+    public CategoryResponseDTO updateCategory(@PathVariable Long id, @Valid @RequestBody CategoryRequestDTO  categoryRequestDTO) {
 
-        return categoryService.updateCategory(id, category);
+        return categoryService.updateCategory(id, categoryRequestDTO);
     }
     
     
