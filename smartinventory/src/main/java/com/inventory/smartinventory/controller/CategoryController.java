@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.inventory.smartinventory.dto.CategoryRequestDTO;
 import com.inventory.smartinventory.dto.CategoryResponseDTO;
+import com.inventory.smartinventory.response.ApiResponse;
 import com.inventory.smartinventory.service.CategoryService;
 
 import jakarta.validation.Valid;
@@ -34,13 +35,19 @@ public class CategoryController {
     
      // CHANGED : Return ResponseEntity
     @PostMapping
-    public ResponseEntity<CategoryResponseDTO> saveCategory(
-            @Valid @RequestBody CategoryRequestDTO categoryRequestDTO) {
+    public ResponseEntity<ApiResponse<CategoryResponseDTO>> saveCategory(
+            @Valid @RequestBody CategoryRequestDTO dto) {
 
         CategoryResponseDTO response =
-                categoryService.saveCategory(categoryRequestDTO);
+                categoryService.saveCategory(dto);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        ApiResponse<CategoryResponseDTO> apiResponse =
+                new ApiResponse<>(
+                        true,
+                        "Category created successfully",
+                        response);
+
+        return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
     }
 
     // step 9 categorty -> categoryResponseDto ,
@@ -48,20 +55,31 @@ public class CategoryController {
 
  // CHANGED : Return ResponseEntity
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDTO>> getAllCategories() {
+    public ResponseEntity<ApiResponse<List<CategoryResponseDTO>>> getAllCategories() {
 
-        return ResponseEntity.ok(categoryService.getAllCategories());
+        ApiResponse<List<CategoryResponseDTO>> response =
+                new ApiResponse<>(
+                        true,
+                        "Categories fetched successfully",
+                        categoryService.getAllCategories());
+
+        return ResponseEntity.ok(response);
     }
 
     // step 9 usecategory -> categoryResponseDTO  ,
 //    getting /receiving cat from db
  // CHANGED : Return ResponseEntity
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryResponseDTO> getCategoryById(
+    public ResponseEntity<ApiResponse<CategoryResponseDTO>> getCategoryById(
             @PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                categoryService.getCategoryById(id));
+        ApiResponse<CategoryResponseDTO> response =
+                new ApiResponse<>(
+                        true,
+                        "Category fetched successfully",
+                        categoryService.getCategoryById(id));
+
+        return ResponseEntity.ok(response);
     }
     
     
@@ -70,12 +88,17 @@ public class CategoryController {
 //  store incoming data ,use reqdto till in service layer
  // CHANGED : Return ResponseEntity
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryResponseDTO> updateCategory(
+    public ResponseEntity<ApiResponse<CategoryResponseDTO>> updateCategory(
             @PathVariable Long id,
-            @Valid @RequestBody CategoryRequestDTO categoryRequestDTO) {
+            @Valid @RequestBody CategoryRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                categoryService.updateCategory(id, categoryRequestDTO));
+        ApiResponse<CategoryResponseDTO> response =
+                new ApiResponse<>(
+                        true,
+                        "Category updated successfully",
+                        categoryService.updateCategory(id, dto));
+
+        return ResponseEntity.ok(response);
     }
     
     
@@ -84,12 +107,18 @@ public class CategoryController {
  // CHANGED : Return 204 No Content
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(
+    public ResponseEntity<ApiResponse<Void>> deleteCategory(
             @PathVariable Long id) {
 
         categoryService.deleteCategory(id);
 
-        return ResponseEntity.noContent().build();
+        ApiResponse<Void> response =
+                new ApiResponse<>(
+                        true,
+                        "Category deleted successfully",
+                        null);
+
+        return ResponseEntity.ok(response);
     }
 
 }
