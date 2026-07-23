@@ -1,20 +1,23 @@
 package com.inventory.smartinventory.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-//step  8 creatom dtos 
-
-public class CategoryResponseDTO {
+public class CategoryDto {
 
     private Long id;
 
+    @NotBlank(message = "Category name is required")
+    @Size(min = 3, max = 100, message = "Category name must be between 3 and 100 characters")
     private String name;
 
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String description;
 
-    public CategoryResponseDTO() {
+    public CategoryDto() {
     }
 
-    public CategoryResponseDTO(Long id, String name, String description) {
+    public CategoryDto(Long id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;

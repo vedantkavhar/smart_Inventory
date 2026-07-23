@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 
 @Entity
 public class Category {
@@ -15,12 +13,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Category name is required")
-    @Size(min = 3, max = 100, message = "Category name must be between 3 and 100 characters")
     @Column(nullable = false, unique = true, length = 100)
     private String name;
 
-    @Size(max = 500, message = "Description cannot exceed 500 characters")
     @Column(length = 500)
     private String description;
 
