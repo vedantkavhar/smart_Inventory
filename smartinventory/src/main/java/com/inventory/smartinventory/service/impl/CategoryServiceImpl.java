@@ -1,10 +1,11 @@
 package com.inventory.smartinventory.service.impl;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.inventory.smartinventory.dto.CategoryDto;
@@ -23,24 +24,29 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto saveCategory(CategoryDto dto) {
         Category category = new Category();
         BeanUtils.copyProperties(dto, category);
-        
+
         Category savedCategory = categoryRepository.save(category);
-        
+
         CategoryDto responseDto = new CategoryDto();
         BeanUtils.copyProperties(savedCategory, responseDto);
         return responseDto;
     }
 
     @Override
-    public List<CategoryDto> getAllCategories() {
-        return categoryRepository.findAll()
-                .stream()
+    public Page<CategoryDto> getAllCategories(int page, int size, String sortBy, String sortDir) {
+        // Build sort direction: asc or desc
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return categoryRepository.findAll(pageable)
                 .map(category -> {
                     CategoryDto dto = new CategoryDto();
                     BeanUtils.copyProperties(category, dto);
                     return dto;
-                })
-                .collect(Collectors.toList());
+                });
     }
 
     @Override
@@ -67,12 +73,24 @@ public class CategoryServiceImpl implements CategoryService {
         BeanUtils.copyProperties(updated, responseDto);
         return responseDto;
     }
-    
+
     @Override
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id : " + id));
 
         categoryRepository.delete(category);
+    }
+
+    @Override
+    public Page<CategoryDto> searchByName(String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return categoryRepository.findByNameContainingIgnoreCase(name, pageable)
+                .map(category -> {
+                    CategoryDto dto = new CategoryDto();
+                    BeanUtils.copyProperties(category, dto);
+                    return dto;
+                });
     }
 }
