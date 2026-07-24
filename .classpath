@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="api-gateway/src/main/java"/>
+	<classpathentry kind="src" path="customer-service/src/main/java"/>
+	<classpathentry kind="src" path="eureka-server/src/main/java"/>
+	<classpathentry kind="src" path="order-service/src/main/java"/>
+	<classpathentry kind="src" path="product-service/src/main/java"/>
+	<classpathentry kind="src" path="smartinventory/src/main/java"/>
+	<classpathentry kind="src" path="smartinventory/src/test/java"/>
+	<classpathentry kind="src" path="supplier-service/src/main/java"/>
+	<classpathentry kind="output" path="smartinventory/target/classes"/>
+</classpath>
