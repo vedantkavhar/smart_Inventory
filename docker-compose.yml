@@ -1,15 +1,20 @@
 services:
   mysql:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: "1912"
-    ports:
-      - "3306:3306"
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p1912"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+  image: mysql:8.0
+
+  command: --default-authentication-plugin=mysql_native_password
+
+  environment:
+    MYSQL_ROOT_PASSWORD: "1912"
+
+  ports:
+    - "3306:3306"
+
+  healthcheck:
+    test: ["CMD-SHELL","mysqladmin ping -h localhost -uroot -p1912"]
+    interval: 10s
+    timeout: 5s
+    retries: 10
 
   eureka-server:
     build:
