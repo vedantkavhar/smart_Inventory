@@ -1,0 +1,68 @@
+{
+  "info": {
+    "name": "Smart Inventory Microservices",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "categoryId", "value": "1" },
+    { "key": "productId", "value": "1" },
+    { "key": "customerId", "value": "1" },
+    { "key": "supplierId", "value": "1" },
+    { "key": "orderId", "value": "1" }
+  ],
+  "auth": { "type": "bearer", "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }] },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register ADMIN",
+          "request": { "auth": { "type": "noauth" }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\",\n  \"email\": \"admin@example.com\",\n  \"role\": \"ADMIN\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/auth/register" },
+          "response": []
+        },
+        {
+          "name": "Login and save token",
+          "request": { "auth": { "type": "noauth" }, "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/auth/login" },
+          "event": [{ "listen": "test", "script": { "exec": ["const response = pm.response.json();", "pm.collectionVariables.set('token', response.token);"] } }],
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        { "name": "Create category", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic devices\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/categories" }, "event": [{ "listen": "test", "script": { "exec": ["pm.collectionVariables.set('categoryId', pm.response.json().id);"] } }] },
+        { "name": "Get categories", "request": { "method": "GET", "url": "{{baseUrl}}/api/categories?page=0&size=10" } },
+        { "name": "Search categories", "request": { "method": "GET", "url": "{{baseUrl}}/api/categories/search?name=Elect" } }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        { "name": "Create product", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Wireless Mouse\",\n  \"description\": \"Bluetooth mouse\",\n  \"price\": 799.00,\n  \"quantity\": 20,\n  \"sku\": \"MOUSE-001\",\n  \"brand\": \"Logitech\",\n  \"status\": \"ACTIVE\",\n  \"categoryId\": {{categoryId}}\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/products" }, "event": [{ "listen": "test", "script": { "exec": ["pm.collectionVariables.set('productId', pm.response.json().id);"] } }] },
+        { "name": "Get products", "request": { "method": "GET", "url": "{{baseUrl}}/api/products?page=0&size=10" } },
+        { "name": "Search products", "request": { "method": "GET", "url": "{{baseUrl}}/api/products/search?name=Mouse" } },
+        { "name": "Filter products by status", "request": { "method": "GET", "url": "{{baseUrl}}/api/products/filter/status?status=ACTIVE" } }
+      ]
+    },
+    {
+      "name": "Customers and Suppliers",
+      "item": [
+        { "name": "Create customer", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Rahul Sharma\",\n  \"email\": \"rahul@example.com\",\n  \"phone\": \"9876543210\",\n  \"address\": \"Bengaluru\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/customers" }, "event": [{ "listen": "test", "script": { "exec": ["pm.collectionVariables.set('customerId', pm.response.json().id);"] } }] },
+        { "name": "Get customers", "request": { "method": "GET", "url": "{{baseUrl}}/api/customers" } },
+        { "name": "Create supplier", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Tech Supplies\",\n  \"email\": \"sales@techsupplies.com\",\n  \"phone\": \"9000011111\",\n  \"address\": \"Mumbai\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/suppliers" }, "event": [{ "listen": "test", "script": { "exec": ["pm.collectionVariables.set('supplierId', pm.response.json().id);"] } }] },
+        { "name": "Get suppliers", "request": { "method": "GET", "url": "{{baseUrl}}/api/suppliers" } }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        { "name": "Create order", "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"customerId\": {{customerId}},\n  \"customerName\": \"Rahul Sharma\",\n  \"orderItems\": [{\n    \"productId\": {{productId}},\n    \"productName\": \"Wireless Mouse\",\n    \"quantity\": 2,\n    \"price\": 799.00\n  }]\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/orders" }, "event": [{ "listen": "test", "script": { "exec": ["pm.collectionVariables.set('orderId', pm.response.json().id);"] } }] },
+        { "name": "Get orders", "request": { "method": "GET", "url": "{{baseUrl}}/api/orders" } },
+        { "name": "Complete order", "request": { "method": "PUT", "url": "{{baseUrl}}/api/orders/{{orderId}}/status?status=COMPLETED" } }
+      ]
+    }
+  ]
+}
