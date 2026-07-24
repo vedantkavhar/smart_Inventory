@@ -53,6 +53,22 @@ cd D:\Downloads\smartinventory\customer-service
 
 Open the Eureka dashboard at `http://localhost:8761` and confirm all services are `UP`.
 
+### Run with Docker
+
+If Docker Desktop is running, start the complete system from the project root:
+
+```powershell
+docker compose up --build
+```
+
+Stop the containers with:
+
+```powershell
+docker compose down
+```
+
+Use `docker compose down -v` only when you also want to delete the MySQL data volume.
+
 ## Authentication
 
 Register a user:
