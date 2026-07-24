@@ -1,139 +1,314 @@
-# Smart Inventory Microservices
+# 🚀 Smart Inventory Management System
 
-Smart Inventory has been split from the original monolith into small Spring Boot services.
+A production-style **Inventory Management System** built using **Spring Boot Microservices**, **Spring Cloud**, **Docker**, **JWT Authentication**, and **MySQL**.
 
-## Services
+The project demonstrates how a traditional monolithic application can be decomposed into independent microservices that communicate through an API Gateway and Service Discovery.
 
-| Service | Port | Purpose |
-|---|---:|---|
-| Eureka Server | 8761 | Service registry |
-| API Gateway | 8080 | Single API entry point and JWT checks |
-| Auth Service | 8081 | Registration, login, JWT generation |
-| Product Service | 8082 | Products and categories |
-| Customer Service | 8083 | Customers |
-| Supplier Service | 8084 | Suppliers |
-| Order Service | 8085 | Orders |
+---
 
-All API requests should go through the API Gateway: `http://localhost:8080`.
+#  Features
 
-## Prerequisites
+* Microservices Architecture
+* Spring Cloud API Gateway
+* Netflix Eureka Service Discovery
+* JWT Authentication & Authorization
+* Role-Based Access Control (ADMIN / MANAGER / EMPLOYEE)
+* RESTful CRUD APIs
+* Spring Data JPA & Hibernate
+* MySQL Database
+* Docker & Docker Compose Support
+* Individual Database per Microservice
+* Secure API Gateway Routing
 
-- Java 17 or newer
-- MySQL running locally
-- MySQL user: `root`
-- MySQL password: `****`
+---
 
-Each service creates its own database automatically:
+# Microservice Architecture
 
-```text
-auth_db, product_db, customer_db, supplier_db, order_db
+```
+                    Client / Postman
+                           │
+                           ▼
+                    API Gateway (8080)
+                           │
+        ┌────────────┬────────────┬────────────┐
+        │            │            │            │
+        ▼            ▼            ▼            ▼
+ Auth Service   Product Service Customer Service Supplier Service
+        │                                         │
+        └───────────────┬─────────────────────────┘
+                        ▼
+                  Order Service
+                        │
+                        ▼
+                  MySQL Databases
+
+                Eureka Server (8761)
 ```
 
-## Run the project
+---
 
-Start every service in a separate PowerShell terminal, in this order:
+# 🛠 Tech Stack
 
-1. `eureka-server`
-2. `auth-service`
-3. `product-service`, `customer-service`, `supplier-service`, `order-service`
-4. `api-gateway`
+### Backend
 
-The included Maven wrappers are incomplete, so use the locally cached Maven command in each terminal:
+* Java 17
+* Spring Boot
+* Spring Security
+* Spring Data JPA
+* Hibernate
+* Spring Cloud Gateway
+* Netflix Eureka
+* JWT Authentication
 
-```powershell
-$Maven = "C:\Users\vedan\.m2\wrapper\dists\apache-maven-3.9.16\0daed3be3ebd1c706f0e69e8b07c6b73f5cc4ea3dfce72a8d0ec2e849ca2ddb0\bin\mvn.cmd"
+### Database
+
+* MySQL 8
+
+### Build Tool
+
+* Maven
+
+### Containerization
+
+* Docker
+* Docker Compose
+
+---
+
+#  Microservices
+
+| Service          | Port | Description                   |
+| ---------------- | ---- | ----------------------------- |
+| Eureka Server    | 8761 | Service Discovery             |
+| API Gateway      | 8080 | Single Entry Point            |
+| Auth Service     | 8081 | Authentication & JWT          |
+| Product Service  | 8082 | Product & Category Management |
+| Customer Service | 8083 | Customer Management           |
+| Supplier Service | 8084 | Supplier Management           |
+| Order Service    | 8085 | Order Management              |
+
+---
+
+#  Authentication
+
+The application uses **JWT (JSON Web Token)** authentication.
+
+Workflow:
+
+```
+Register
+    │
+    ▼
+Login
+    │
+    ▼
+Receive JWT Token
+    │
+    ▼
+Use Authorization Header
+
+Bearer <JWT_TOKEN>
 ```
 
-For example, to run the customer service:
+---
 
-```powershell
-cd D:\Downloads\smartinventory\customer-service
-& $Maven "-Dmaven.repo.local=C:\Users\vedan\.m2\repository" spring-boot:run
-```
+#  User Roles
 
-Open the Eureka dashboard at `http://localhost:8761` and confirm all services are `UP`.
+| Role     | Permissions                     |
+| -------- | ------------------------------- |
+| ADMIN    | Full Access                     |
+| MANAGER  | Inventory Management            |
+| EMPLOYEE | Read Operations + Create Orders |
 
-### Run with Docker
+---
 
-If Docker Desktop is running, start the complete system from the project root:
-
-```powershell
-docker compose up --build
-```
-
-Stop the containers with:
-
-```powershell
-docker compose down
-```
-
-Use `docker compose down -v` only when you also want to delete the MySQL data volume.
+#  REST APIs
 
 ## Authentication
 
-Register a user:
-
-```http
-POST http://localhost:8080/api/auth/register
-Content-Type: application/json
 ```
-
-```json
-{
-  "username": "admin",
-  "password": "admin123",
-  "email": "admin@example.com",
-  "role": "ADMIN"
-}
-```
-
-Log in:
-
-```http
-POST http://localhost:8080/api/auth/login
-Content-Type: application/json
-```
-
-```json
-{
-  "username": "admin",
-  "password": "admin123"
-}
-```
-
-Copy the returned token into Postman for every non-auth request:
-
-```text
-Authorization: Bearer <token>
-```
-
-## Roles
-
-| Role | Access |
-|---|---|
-| `ADMIN` | Full access |
-| `MANAGER` | Full access to the current inventory APIs |
-| `EMPLOYEE` | All `GET` requests and `POST /api/orders` only |
-
-Requests with no valid token return `401 Unauthorized`. Requests blocked by a role rule return `403 Forbidden`.
-
-## Main API endpoints
-
-```text
 POST /api/auth/register
 POST /api/auth/login
-
-GET, POST, PUT, DELETE /api/categories
-GET, POST, PUT, DELETE /api/products
-GET /api/products/search?name=mouse
-GET /api/products/filter/category?categoryId=1
-GET /api/products/filter/status?status=ACTIVE
-GET /api/products/filter/price?minPrice=100&maxPrice=1000
-
-GET, POST, PUT, DELETE /api/customers
-GET, POST, PUT, DELETE /api/suppliers
-GET, POST, DELETE /api/orders
-PUT /api/orders/{id}/status?status=COMPLETED
 ```
 
-Create a category before creating a product. Create a customer before creating an order.
+---
+
+## Categories
+
+```
+GET
+POST
+PUT
+DELETE
+/api/categories
+```
+
+---
+
+## Products
+
+```
+GET
+POST
+PUT
+DELETE
+/api/products
+
+GET /api/products/search
+GET /api/products/filter/category
+GET /api/products/filter/status
+GET /api/products/filter/price
+```
+
+---
+
+## Customers
+
+```
+GET
+POST
+PUT
+DELETE
+/api/customers
+```
+
+---
+
+## Suppliers
+
+```
+GET
+POST
+PUT
+DELETE
+/api/suppliers
+```
+
+---
+
+## Orders
+
+```
+GET
+POST
+DELETE
+/api/orders
+
+PUT /api/orders/{id}/status
+```
+
+---
+
+# 🗄 Databases
+
+Each microservice maintains its own database.
+
+```
+auth_db
+
+product_db
+
+customer_db
+
+supplier_db
+
+order_db
+```
+
+---
+
+#  Running with Docker
+
+Clone the repository.
+
+```
+git clone <repository-url>
+```
+
+Move inside the project.
+
+```
+cd smartinventory
+```
+
+Start all services.
+
+```
+docker compose up --build
+```
+
+Stop all services.
+
+```
+docker compose down
+```
+
+Delete containers and database volumes.
+
+```
+docker compose down -v
+```
+
+---
+
+# Running Without Docker
+
+Start the services in the following order:
+
+1. Eureka Server
+2. Auth Service
+3. Product Service
+4. Customer Service
+5. Supplier Service
+6. Order Service
+7. API Gateway
+
+Visit:
+
+```
+http://localhost:8761
+```
+
+Verify that every service is registered and running.
+
+---
+
+#  Testing
+
+1. Register a user.
+2. Login to receive a JWT.
+3. Add the token to the Authorization header:
+
+```
+Bearer <token>
+```
+
+4. Test all CRUD APIs using Postman.
+
+---
+
+# 📁 Project Structure
+
+```
+smartinventory
+│
+├── api-gateway
+├── auth-service
+├── customer-service
+├── eureka-server
+├── order-service
+├── product-service
+├── supplier-service
+├── docker-compose.yml
+└── README.md
+```
+
+
+
+#  Author
+
+**Vedant Kavhar**
+
+---
+
+# ⭐ If you found this project useful, consider giving it a Star!
